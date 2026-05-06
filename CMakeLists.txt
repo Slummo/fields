@@ -7,6 +7,22 @@ else()
     set(IS_SELF FALSE)
 endif()
 
+if(IS_SELF)
+    # Default to Debug build
+    if(NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
+    endif()
+
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+endif()
+
+add_subdirectory(extern)
+
+add_executable(main src/main.c)
+target_link_libraries(main PRIVATE calyx::lib)
+
 if (IS_SELF)
     # Strip the project source directory from __FILE__ macros
     if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
@@ -40,14 +56,4 @@ if (IS_SELF)
         $<$<CONFIG:Debug>:-fsanitize=leak>
         $<$<CONFIG:Debug>:-fsanitize=undefined>
     )
-
-    # Default to debug build
-    if(NOT CMAKE_BUILD_TYPE)
-      set(CMAKE_BUILD_TYPE Debug)
-    endif()
 endif()
-
-add_subdirectory(extern)
-
-add_executable(main src/main.c)
-target_link_libraries(main PRIVATE calyx::lib)

@@ -5,7 +5,7 @@ CMAKE_ARGS		:=
 
 CORES			?= $(shell nproc 2>/dev/null || echo 4)
 
-.PHONY: all debug release runt rune update clean clean-full help
+.PHONY: all debug release clean-full help
 
 all: debug
 
@@ -27,33 +27,6 @@ release: $(BUILD_RELEASE)/CMakeCache.txt
 	@echo "Building Release..."
 	@cmake --build $(BUILD_RELEASE) -j $(CORES)
 
-runt: debug
-	@if [ -z "$(NAME)" ]; then echo "Specify NAME"; exit 1; fi
-	@echo "Running Test '$(NAME)'..."
-	@./$(BUILD_DEBUG)/test/test_$(NAME)
-
-rune: debug
-	@if [ -z "$(NAME)" ]; then echo "Specify NAME"; exit 1; fi
-	@echo "Running Example '$(NAME)'..."
-	@./$(BUILD_DEBUG)/example/example_$(NAME)
-
-update:
-	@echo "Updating dependencies..."
-	@touch CMakeLists.txt
-	@$(MAKE) debug
-
-clean:
-	@if [ -n "$(NAME)" ]; then \
-		echo "Cleaning target '$(NAME)'..."; \
-		rm -rf $(BUILD_DEBUG)/test/CMakeFiles/test_$(NAME).dir; \
-		rm -rf $(BUILD_DEBUG)/example/CMakeFiles/example_$(NAME).dir; \
-		rm -f $(BUILD_DEBUG)/test/test_$(NAME) $(BUILD_DEBUG)/example/example_$(NAME); \
-	else \
-		echo "Cleaning local files..."; \
-		rm -rf $(BUILD_DEBUG)/test $(BUILD_DEBUG)/example; \
-		rm -rf $(BUILD_RELEASE)/test $(BUILD_RELEASE)/example; \
-	fi
-
 clean-full:
 	@echo "Cleaning build..."
 	@rm -rf build
@@ -63,6 +36,4 @@ help:
 	@echo "  make                        - Build debug version"
 	@echo "  make debug                  - Build debug version"
 	@echo "  make release                - Build release version"
-	@echo "  make update                 - Re-fetch/update dependencies"
-	@echo "  make clean [NAME=x]         - Remove local object files"
 	@echo "  make clean-full             - Remove all build files"
