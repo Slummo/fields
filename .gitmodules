@@ -1,0 +1,3 @@
+[submodule "extern/calyx"]
+	path = extern/calyx
+	url = git@github.com:Slummo/calyx.git

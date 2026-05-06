@@ -1,7 +1,7 @@
 BUILD_DEBUG		:= build/debug
 BUILD_RELEASE	:= build/release
 
-CMAKE_ARGS		:= -DFETCHCONTENT_SOURCE_DIR_KITSUNE=$(HOME)/Projects/kitsune
+CMAKE_ARGS		:= 
 
 CORES			?= $(shell nproc 2>/dev/null || echo 4)
 

@@ -47,15 +47,7 @@ if (IS_SELF)
     endif()
 endif()
 
-# Add dependencies
-include(FetchContent)
-
-FetchContent_Declare(
-    calyx
-    GIT_REPOSITORY  https://github.com/Slummo/calyx.git
-    GIT_TAG         master
-)
-FetchContent_MakeAvailable(calyx)
+add_subdirectory(extern)
 
 add_executable(main src/main.c)
 target_link_libraries(main PRIVATE calyx::lib)
