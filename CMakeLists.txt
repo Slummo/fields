@@ -1,59 +1,21 @@
 cmake_minimum_required(VERSION 4.0)
 project(fields VERSION 1.0.0 LANGUAGES C)
 
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    set(IS_SELF TRUE)
-else()
-    set(IS_SELF FALSE)
-endif()
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/common.cmake)
 
-if(IS_SELF)
-    # Default to Debug build
-    if(NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)
-    endif()
-
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-endif()
+set_default_build_type()
+set_output_directories()
 
 add_subdirectory(extern)
 
-add_executable(main src/main.c)
-target_link_libraries(main PRIVATE calyx::lib)
-
-if (IS_SELF)
-    # Strip the project source directory from __FILE__ macros
-    if (CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-      add_compile_options(-fmacro-prefix-map=${CMAKE_SOURCE_DIR}/=)
-    endif()
-
-    add_compile_options(
-        -Wall
-        -Wextra
-        -Werror
-        -Wsign-conversion
-        -std=c99
-
-        # Debug flags
-        $<$<CONFIG:Debug>:-g>
-        $<$<CONFIG:Debug>:-O0>
-        $<$<CONFIG:Debug>:-fsanitize=address>
-        $<$<CONFIG:Debug>:-fsanitize=leak>
-        $<$<CONFIG:Debug>:-fsanitize=undefined>
-        $<$<CONFIG:Debug>:-fno-omit-frame-pointer>
-        $<$<CONFIG:Debug>:-DDEBUG>
-
-        # Release flags
-        $<$<CONFIG:Release>:-O3>
-        $<$<CONFIG:Release>:-march=native>
-        $<$<CONFIG:Release>:-DNDEBUG>
-    )
-
-    add_link_options(
-        $<$<CONFIG:Debug>:-fsanitize=address>
-        $<$<CONFIG:Debug>:-fsanitize=leak>
-        $<$<CONFIG:Debug>:-fsanitize=undefined>
-    )
-endif()
+# Executable
+add_executable(${PROJECT_NAME} "")
+target_sources(${PROJECT_NAME} PRIVATE
+    src/main.c
+)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_compile_features(${PROJECT_NAME} PRIVATE c_std_11)
+apply_compile_options(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} PRIVATE calyx::lib)

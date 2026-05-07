@@ -9,7 +9,6 @@ uniform mat4 uView;
 uniform mat4 uProj;
 
 out float vVal;
-out vec2 vPos;
 
 void main() {
     int x = gl_InstanceID % uGridWidth;
